@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Quran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Client;
 
 class QuranController extends Controller
 {
@@ -16,8 +17,11 @@ class QuranController extends Controller
      */
     public function index()
     {
-        $response = Http::get('https://api-alquranid.herokuapp.com/surah');
-        $data = $response->json();
+        $client = new Client();
+        $response = $client->request('GET', 'https://api-alquranid.herokuapp.com/surah');
+        $statusCode = $response->getStatusCode();
+        $body = $response->getBody()->getContents();
+        $data = json_decode($body, true);
         return view('index', compact('data'));
     }
 
